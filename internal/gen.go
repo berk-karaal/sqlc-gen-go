@@ -123,7 +123,7 @@ func Generate(ctx context.Context, req *plugin.GenerateRequest) (*plugin.Generat
 	}
 
 	if options.OmitUnusedStructs {
-		enums, structs = filterUnusedStructs(enums, structs, queries)
+		enums, structs = filterUnusedStructs(options, enums, structs, queries)
 	}
 
 	if err := validate(options, enums, structs, queries); err != nil {
@@ -398,7 +398,7 @@ func checkNoTimesForMySQLCopyFrom(queries []Query) error {
 	return nil
 }
 
-func filterUnusedStructs(enums []Enum, structs []Struct, queries []Query) ([]Enum, []Struct) {
+func filterUnusedStructs(options *opts.Options, enums []Enum, structs []Struct, queries []Query) ([]Enum, []Struct) {
 	keepTypes := make(map[string]struct{})
 
 	for _, query := range queries {
@@ -425,8 +425,15 @@ func filterUnusedStructs(enums []Enum, structs []Struct, queries []Query) ([]Enu
 
 	keepEnums := make([]Enum, 0, len(enums))
 	for _, enum := range enums {
-		_, keep := keepTypes[enum.Name]
-		_, keepNull := keepTypes["Null"+enum.Name]
+		var enumType string
+		if options.OutputModelsPackageImportPath != "" {
+			enumType = options.OutputModelsPackage + "." + enum.Name
+		} else {
+			enumType = enum.Name
+		}
+
+		_, keep := keepTypes[enumType]
+		_, keepNull := keepTypes["Null"+enumType]
 		if keep || keepNull {
 			keepEnums = append(keepEnums, enum)
 		}
@@ -434,7 +441,14 @@ func filterUnusedStructs(enums []Enum, structs []Struct, queries []Query) ([]Enu
 
 	keepStructs := make([]Struct, 0, len(structs))
 	for _, st := range structs {
-		if _, ok := keepTypes[st.Name]; ok {
+		var structType string
+		if st.Package != "" {
+			structType = st.Package + "." + st.Name
+		} else {
+			structType = st.Name
+		}
+
+		if _, ok := keepTypes[structType]; ok {
 			keepStructs = append(keepStructs, st)
 		}
 	}
