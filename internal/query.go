@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/sqlc-dev/sqlc-gen-go/internal/opts"
 	"github.com/sqlc-dev/plugin-sdk-go/metadata"
 	"github.com/sqlc-dev/plugin-sdk-go/plugin"
+	"github.com/sqlc-dev/sqlc-gen-go/internal/opts"
 )
 
 type QueryValue struct {
@@ -88,6 +88,9 @@ func (v QueryValue) Type() string {
 		return v.Typ
 	}
 	if v.Struct != nil {
+		if v.Struct.Package != "" {
+			return fmt.Sprintf("%s.%s", v.Struct.Package, v.Struct.Name)
+		}
 		return v.Struct.Name
 	}
 	panic("no type for QueryValue: " + v.Name)

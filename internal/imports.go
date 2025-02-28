@@ -5,8 +5,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/sqlc-dev/sqlc-gen-go/internal/opts"
 	"github.com/sqlc-dev/plugin-sdk-go/metadata"
+	"github.com/sqlc-dev/sqlc-gen-go/internal/opts"
 )
 
 type fileImports struct {
@@ -400,6 +400,47 @@ func (i *importer) queryImports(filename string) fileImports {
 	}
 	if sliceScan() && !sqlpkg.IsPGX() {
 		pkg[ImportSpec{Path: "github.com/lib/pq"}] = struct{}{}
+	}
+
+	requiresModelsFileImport := func() bool {
+		if i.Options.OutputModelsPackageImportPath == "" {
+			return false
+		}
+
+		for _, q := range gq {
+			// Check if the return type is from models package (possibly a model struct or an enum)
+			if q.hasRetType() && strings.HasPrefix(q.Ret.Type(), i.Options.OutputModelsPackage+".") {
+				return true
+			}
+
+			// Check if the return type struct contains a type from models package (possibly an enum field)
+			if q.hasRetType() && q.Ret.IsStruct() {
+				for _, f := range q.Ret.Struct.Fields {
+					if strings.HasPrefix(f.Type, i.Options.OutputModelsPackage+".") {
+						return true
+					}
+				}
+			}
+
+			// Check if the argument type is from models package (possibly an enum)
+			if !q.Arg.isEmpty() && strings.HasPrefix(q.Arg.Type(), i.Options.OutputModelsPackage+".") {
+				return true
+			}
+
+			// Check if the argument struct contains a type from models package (possibly an enum field)
+			if !q.Arg.isEmpty() && q.Arg.IsStruct() {
+				for _, f := range q.Arg.Struct.Fields {
+					if strings.HasPrefix(f.Type, i.Options.OutputModelsPackage+".") {
+						return true
+					}
+				}
+			}
+
+		}
+		return false
+	}
+	if requiresModelsFileImport() {
+		pkg[ImportSpec{Path: i.Options.OutputModelsPackageImportPath}] = struct{}{}
 	}
 
 	return sortedImports(std, pkg)

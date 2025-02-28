@@ -5,13 +5,14 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/sqlc-dev/sqlc-gen-go/internal/opts"
 	"github.com/sqlc-dev/plugin-sdk-go/plugin"
+	"github.com/sqlc-dev/sqlc-gen-go/internal/opts"
 )
 
 type Struct struct {
 	Table   *plugin.Identifier
 	Name    string
+	Package string
 	Fields  []Field
 	Comment string
 }
