@@ -159,5 +159,9 @@ func ValidateOpts(opts *Options) error {
 		return fmt.Errorf("invalid options: query parameter limit must not be negative")
 	}
 
+	if opts.OutputModelsPackageImportPath != "" && opts.OutputModelsPackage == "" {
+		return fmt.Errorf("invalid options: output_models_package must be set when output_models_package_import_path is used")
+	}
+
 	return nil
 }
