@@ -68,5 +68,3 @@ outside of the `out` directory.
 - Deciding whether the genereted file needs to import separated models file package or not.
   (`internal/imports.go`)
 
-Compare complete code changes:
-[github.com/sqlc-dev/sqlc-gen-go/compare/main...berk-karaal:sqlc-gen-go:allow-exporting-models-to-separate-package?diff=split&w=](https://github.com/sqlc-dev/sqlc-gen-go/compare/main...berk-karaal:sqlc-gen-go:allow-exporting-models-to-separate-package?diff=split&w=)
