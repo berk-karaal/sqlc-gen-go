@@ -88,10 +88,7 @@ func (v QueryValue) Type() string {
 		return v.Typ
 	}
 	if v.Struct != nil {
-		if v.Struct.Package != "" {
-			return fmt.Sprintf("%s.%s", v.Struct.Package, v.Struct.Name)
-		}
-		return v.Struct.Name
+		return v.Struct.Type()
 	}
 	panic("no type for QueryValue: " + v.Name)
 }

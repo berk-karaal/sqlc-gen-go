@@ -441,14 +441,7 @@ func filterUnusedStructs(options *opts.Options, enums []Enum, structs []Struct, 
 
 	keepStructs := make([]Struct, 0, len(structs))
 	for _, st := range structs {
-		var structType string
-		if st.Package != "" {
-			structType = st.Package + "." + st.Name
-		} else {
-			structType = st.Name
-		}
-
-		if _, ok := keepTypes[structType]; ok {
+		if _, ok := keepTypes[st.Type()]; ok {
 			keepStructs = append(keepStructs, st)
 		}
 	}
