@@ -17,6 +17,13 @@ type Struct struct {
 	Comment string
 }
 
+func (s Struct) Type() string {
+	if s.Package != "" {
+		return s.Package + "." + s.Name
+	}
+	return s.Name
+}
+
 func StructName(name string, options *opts.Options) string {
 	if rename := options.Rename[name]; rename != "" {
 		return rename
