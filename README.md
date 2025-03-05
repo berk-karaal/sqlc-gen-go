@@ -15,8 +15,8 @@ version: "2"
 plugins:
   - name: golang
     wasm:
-      url: https://github.com/berk-karaal/sqlc-gen-go/releases/download/v1.5.1/berk-karaal-sqlc-gen-go_1.5.1.wasm
-      sha256: 415de96b2cf3bbda5a5ebc8fbf2a782f6d9916a35554b3e61183c90a6c504165
+      url: https://github.com/berk-karaal/sqlc-gen-go/releases/download/v1.5.2/berk-karaal-sqlc-gen-go_1.5.2.wasm
+      sha256: bf915183b656efb09c9ee5b7b73840570807485ae622b4ae80dd1d5595dfd8d3
 sql:
   - engine: "postgresql"
     queries: "query.sql"
